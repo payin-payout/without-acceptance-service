@@ -14,6 +14,7 @@ https://lk.payin-payout.net/user/api-create указав следующие па
 |password   |Строка, например, password   |Пароль пользователя   |
 |resident   |1 либо 0 |Является ли регистрируемый пользователь резидентом РФ, 1 если является, 0 если нет   |
 |user_id   |Целое число, например 1111   |Идентификатор пользователя который осуществляет работу с API   |
+|source_registration   |Опционально, строка   |Опциональный источник регистрации|
 |timestamp   | Целое число, время Unix в секундах | [Текущее время Unix](calculate-hash.md#Метка-текущего-времени-в-параметрах) в секундах в UTC |
 |hash   |Строка   |[Хэш безопасности](calculate-hash.md)   |
 
@@ -30,6 +31,7 @@ $post = [
     'password' => 'password',
     'resident' => 1,
     'user_id' => 1111,
+    'source_registration' => 'some_source',
     'timestamp' => time(),
 ];
 $hash = hash_hmac('md5', implode($post), 'secret_key');
@@ -51,7 +53,7 @@ echo "\nerror:\n$error";
 curl -X POST \
   https://lk.payin-payout.net/user/api-create \
   -H 'cache-control: no-cache' \
-  -d 'ul=1&timestamp=1558429736&email=email_test%40email.ru&phone=%2B79239999999&username=test_test&password=password&resident=1&hash=54509a826d079c4fddfd8456a753f007&user_id=1111'
+  -d 'ul=1&timestamp=1558429736&email=email_test%40email.ru&phone=%2B79239999999&username=test_test&password=password&resident=1&hash=54509a826d079c4fddfd8456a753f007&user_id=1111&source_registration=some_source'
 ```
 
 В случае корректного запроса возвращается ответ:
