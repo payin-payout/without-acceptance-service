@@ -60,15 +60,27 @@ curl -X POST \
 
 ```json
 {
-    "status": true,
-    "result": 22222,
-    "tracker": " gid_5ce24b50061366.52192801"
+  "status": true,
+  "result": {
+    "id": 22222,
+    "tips_url": "https://lk.payin-payout.net/tips/pay-to-user?userId=64389500694851",
+    "card_url": "https://lk.payin-payout.net/card/64389500694851.jpeg",
+    "invite_url": "https://lk.payin-payout.net/invite/viOqD0"
+  },
+  "tracker": " gid_5dd75fe7c400e8.58224878"
 }
+
 ```
 
 status информирует о успешности запроса 
 
-result содержит идентификатор созданного пользователя
+id - содержит идентификатор созданного пользователя
+
+tips_url - ссылка для оплаты чаевых в пользу созданного пользователя
+
+card_url - ссылка на визитку пользователя
+
+invite_url - ссылка для регистрации по приглашению созданного пользователя
 
 tracker содержит служебную информацию
 
