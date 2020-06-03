@@ -28,12 +28,16 @@ $paramPost = [
     'timestamp' => time(),
 ];
 
-$hash = hash_hmac('md5', implode($paramPost), 'secret_key');
+uksort($paramPost, 'strcasecmp');
+$data_string = http_build_query($paramPost, '', '&');
+$hash = hash_hmac('md5', $data_string, 'secret_key');
 $paramPost['hash'] = $hash;
 $curl = curl_init();
 curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($curl, CURLOPT_HEADER, true);
 curl_setopt($curl, CURLOPT_POST, true);
+curl_setopt($curl, CURLOPT_HTTPHEADER, [
+    'Accept: application/json' // чтобы получить ошибку в случае её возникновения в json
+]);
 curl_setopt($curl, CURLOPT_POSTFIELDS, $paramPost);
 curl_setopt($curl, CURLOPT_URL, 'https://lk.payin-payout.net/payment-in/get-last-payments-for-user');
 $out = curl_exec($curl);

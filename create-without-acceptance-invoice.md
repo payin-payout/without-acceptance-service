@@ -29,11 +29,16 @@ $paramPost = [
     'description' => 'description',
     'timestamp' => time(),
 ];
-$hash = hash_hmac('md5', implode($paramPost), 'secret_key');
+uksort($paramPost, 'strcasecmp');
+$data_string = http_build_query($paramPost, '', '&');
+$hash = hash_hmac('md5', $data_string, 'secret_key');
 $paramPost['hash'] = $hash;
 $curl = curl_init();
 curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($curl, CURLOPT_HEADER, true);
+curl_setopt($curl, CURLOPT_HTTPHEADER, [
+    'Accept: application/json' // чтобы получить ошибку в случае её возникновения в json
+]);
 curl_setopt($curl, CURLOPT_POST, true);
 curl_setopt($curl, CURLOPT_POSTFIELDS, $paramPost);
 curl_setopt($curl, CURLOPT_URL, 'https://lk.payin-payout.net/service-of-services/create-invoice');
@@ -41,16 +46,6 @@ $out = curl_exec($curl);
 echo "\nout:\n$out";
 $error = curl_error($curl);
 echo "\nerror:\n$error";
-
-```
-
-### Пример запроса curl
-
-```bash
-curl -X POST \
-  https://lk.payin-payout.net/service-of-services/create-invoice \
-  -H 'cache-control: no-cache' \
-  -d 'service_id=40&timestamp=1558429736&user_id=1111&payer_id=2222&amount=1000&external_id=invoice_123452&description=description&hash=9ce2806caa31dba92b1da5443e3993bd'
 
 ```
 

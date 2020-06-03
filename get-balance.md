@@ -26,11 +26,16 @@ $paramPost = [
     'timestamp' => time(),
 ];
 
-$hash = hash_hmac('md5', implode($paramPost), 'secret_key');
+uksort($paramPost, 'strcasecmp');
+$data_string = http_build_query($paramPost, '', '&');
+$hash = hash_hmac('md5', $data_string, 'secret_key');
 $paramPost['hash'] = $hash;
 $curl = curl_init();
 curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($curl, CURLOPT_POST, true);
+curl_setopt($curl, CURLOPT_HTTPHEADER, [
+    'Accept: application/json' // чтобы получить ошибку в случае её возникновения в json
+]);
 curl_setopt($curl, CURLOPT_POSTFIELDS, $paramPost);
 curl_setopt($curl, CURLOPT_URL, 'https://lk.payin-payout.net/user/api-get-balance');
 $out = curl_exec($curl);
@@ -40,22 +45,21 @@ echo "\nerror:\n$error";
 
 ```
 
-### Пример запроса curl
-
-```bash
-curl -X POST \
-  https://lk.payin-payout.net/user/api-get-balance \
-  -H 'cache-control: no-cache' \
-  -d 'timestamp=1558429736balance_user_id=1111&user_id=2222&hash=99fa556d7082890be0da33144249e3f8'
-```
-
 В случае корректного запроса возвращается ответ:
 
 ```json
 {
   "status": true,
-  "result": 12425.56,
-  "tracker": " gid_5ce4b4bfb671a2.64203729"
+  "result": {
+    "840": "0.02000000",
+    "999": "0.00000000",
+    "980": "0.00000000",
+    "978": "29.00000000",
+    "398": "0.00000000",
+    "643": "8726.47000000",
+    "826": "0.00000000"
+  },
+  "tracker": " gid_5ed772db10bc57.06308154"
 }
 ```
 
@@ -67,4 +71,3 @@ curl -X POST \
 |result   |число  |баланс рублёвого счёта |
 |tracker   |строка   |служебная информация   |
 
- 
