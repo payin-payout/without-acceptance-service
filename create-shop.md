@@ -30,7 +30,10 @@ $paramPost = [
     'timestamp' => time(),
 ];
 
-$hash = hash_hmac('md5', implode($paramPost), 'secret_key');
+uksort($paramPost, 'strcasecmp');
+$data_string = http_build_query($paramPost, '', '&');
+$hash = hash_hmac('md5', $data_string, 'secret_key');
+
 $paramPost['hash'] = $hash;
 $curl = curl_init();
 curl_setopt($curl, CURLOPT_VERBOSE, true);
@@ -44,15 +47,6 @@ echo "\nout:\n$out";
 $error = curl_error($curl);
 echo "\nerror:\n$error";
 
-```
-
-### Пример запроса curl
-
-```bash
-curl -X POST \
-  https://lk.payin-payout.net/shop/api-create \
-  -H 'cache-control: no-cache' \
-  -d 'title=7026&timestamp=1558429736&address=%20some%20address&user_id=7026&hash=99fa556d7082890be0da33144249e3f8'
 ```
 
 В случае корректного запроса возвращается ответ:
@@ -72,5 +66,3 @@ curl -X POST \
 |status   | логическое значения   |определяет успешность операции  |
 |result   |целое число  |идентификатор созданного магазина  |
 |tracker   |строка   |служебная информация   |
-
- 

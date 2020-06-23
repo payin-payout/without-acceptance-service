@@ -24,7 +24,9 @@ $paramPost = [
     'timestamp' => time(),
 ];
 
-$hash = hash_hmac('md5', implode($paramPost), 'secret_key');
+uksort($paramPost, 'strcasecmp');
+$data_string = http_build_query($paramPost, '', '&');
+$hash = hash_hmac('md5', $data_string, 'secret_key');
 $paramPost['hash'] = $hash;
 $curl = curl_init();
 curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);

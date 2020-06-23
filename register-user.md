@@ -24,36 +24,34 @@ https://lk.payin-payout.net/user/api-create указав следующие па
 <?php
 
 $post = [
-    'ul' => 1,
-    'email' => 'email@email.ru',
-    'phone' => '+79111111111',
-    'username' => 'username',
-    'password' => 'password',
-    'resident' => 1,
-    'user_id' => 1111,
-    'source_registration' => 'some_source',
-    'timestamp' => time(),
+    'ul' => 1, // является ли регистрируемый пользователь юридическим лицом
+    'email' => 'sourcetest4@email.ru', // почта пользователя
+    'phone' => '+7111223344', // телефон пользователя
+    'username' => 'username', // имя пользователя
+    'password' => 'dfg5t54ht435', // пароль
+    'resident' => 1, // является ли пользователь резидентом РФ
+    'timestamp' => time(), // временная метка обеспечивающая уникальность подписи
+    'source_registration' => 'some_source', // источник регистрации
+    'user_id' => 12345, // идентификатор пользователя от имени которого ведётся работа с API
 ];
-$hash = hash_hmac('md5', implode($post), 'secret_key');
+
+uksort($post, 'strcasecmp');
+$data_string = http_build_query($post, '', '&');
+$hash = hash_hmac('md5', $data_string, 'some_key');
 $post['hash'] = $hash;
 $curl = curl_init();
 curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($curl, CURLOPT_POST, true);
 curl_setopt($curl, CURLOPT_POSTFIELDS, $post);
+curl_setopt($curl, CURLOPT_HTTPHEADER, [
+    'Accept: application/json' // чтобы получить ошибку в случае её возникновения в json
+]);
 curl_setopt($curl, CURLOPT_URL, 'https://lk.payin-payout.net/user/api-create');
 $out = curl_exec($curl);
 echo "\nout:\n$out";
 $error = curl_error($curl);
 echo "\nerror:\n$error";
-```
 
-### Пример запроса curl
-
-```bash
-curl -X POST \
-  https://lk.payin-payout.net/user/api-create \
-  -H 'cache-control: no-cache' \
-  -d 'ul=1&timestamp=1558429736&email=email_test%40email.ru&phone=%2B79239999999&username=test_test&password=password&resident=1&hash=54509a826d079c4fddfd8456a753f007&user_id=1111&source_registration=some_source'
 ```
 
 В случае корректного запроса возвращается ответ:
